@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso Avançado de Bot Discord</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e;
+            color: #e5e5f5;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #21213e;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #9f88ff;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            font-size: 1.75rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #3a3a5e;
+            padding-bottom: 0.5rem;
+        }
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        p, li {
+            font-size: 1rem;
+            color: #c5c5d9;
+        }
+        .step-card {
+            background-color: #2c2c4b;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .code-block {
+            background-color: #12122b;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        .code-block-inline {
+            background-color: #2c2c4b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .warning {
+            background-color: #ffd700;
+            color: #333;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Curso Avançado de Bot Discord (JavaScript)</h1>
+        <p class="text-center mb-6">
+            Este curso cobre a criação de um bot para o Discord do zero, utilizando as melhores práticas do JavaScript moderno, comandos de barra, eventos e armazenamento de dados.
+        </p>
+
+        <!-- Aula 1: Criação do bot e 'Hello World!' -->
+        <div class="step-card">
+            <h2>Aula 1: Criação do bot e 'Hello World!'</h2>
+            <h3>Introdução ao JavaScript e ao Discord</h3>
+            <p>Para criar um bot com JavaScript, você usará o **Node.js** e a biblioteca **discord.js**. O Node.js é o ambiente que permite executar o JavaScript fora do navegador, e a `discord.js` é a ferramenta que simplifica a comunicação com o Discord.</p>
+            <h3>Criação do bot no Portal do Desenvolvedor</h3>
+            <p>Vá para o <a href="https://discord.com/developers/applications" target="_blank" class="text-blue-400 hover:underline">Discord Developer Portal</a> para criar um novo aplicativo, adicione um bot e copie o **token**. O token é a senha do seu bot, mantenha-o em segredo.</p>
+            <h3>Adicionar o bot ao servidor</h3>
+            <p>Em "OAuth2" > "URL Generator", selecione os escopos `bot` e `applications.commands`, escolha as permissões necessárias e use o URL gerado para convidar o bot para o seu servidor.</p>
+            <h3>Instalações e Estrutura</h3>
+            <p>Crie uma nova pasta para o seu projeto e abra o terminal nela. Rode o comando para iniciar um projeto Node.js e instalar a biblioteca:</p>
+            <div class="code-block">
+                npm init -y<br>
+                npm install discord.js
+            </div>
+            <p>Sua estrutura de pastas inicial será a seguinte:</p>
+            <div class="code-block">
+                seu-bot/<br>
+                ├── index.js <br>
+                └── package.json
+            </div>
+            <h3>Código 'Hello World!'</h3>
+            <p>No arquivo <code class="code-block-inline">index.js</code>, adicione o código básico para fazer o bot se conectar e enviar uma mensagem no console quando estiver online:</p>
+            <div class="code-block">
+<pre><code>const { Client, GatewayIntentBits } = require('discord.js');
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+const token = 'SEU_TOKEN_AQUI'; // Substitua pelo token do seu bot
+
+client.once('ready', () => {
+    console.log(`Bot conectado como ${client.user.tag}!`);
+});
+
+client.login(token);
+</code></pre>
+            </div>
+            <h3>Execução e Verificação</h3>
+            <p>No terminal, rode o comando <code class="code-block-inline">node index.js</code>. Se tudo estiver correto, você verá a mensagem "Bot conectado como [nome do seu bot]!" no console.</p>
+            <p>A documentação oficial da `discord.js` pode ser encontrada em <a href="https://discord.js.org/#/docs/main/stable/general/welcome" target="_blank" class="text-blue-400 hover:underline">discord.js.org</a>.</p>
+        </div>
+
+        <!-- Aula 2: Comandos Básicos -->
+        <div class="step-card">
+            <h2>Aula 2: Comandos Básicos</h2>
+            <p>Agora vamos criar comandos básicos que respondem a mensagens com prefixo (como `!`).</p>
+            <h3>Estrutura de Pastas para Comandos</h3>
+            <p>Para organizar os comandos, crie uma pasta chamada <code class="code-block-inline">commands</code>. A estrutura do projeto será:</p>
+            <div class="code-block">
+                seu-bot/<br>
+                ├── index.js <br>
+                └── commands/<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── ping.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── echo.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── multi-args.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── userinfo.js
+            </div>
+            <h3>Estrutura básica de um comando</h3>
+            <p>No arquivo <code class="code-block-inline">ping.js</code>, adicione este código simples. O bot irá ouvir por mensagens que começam com `!ping`.</p>
+            <div class="code-block">
+<pre><code>module.exports = {
+    name: 'ping',
+    description: 'Responde com "Pong!"',
+    execute(message, args) {
+        message.reply('Pong!');
+    },
+};
+</code></pre>
+            </div>
+            <h3>Criação de um comando com argumentos</h3>
+            <p>Crie um arquivo <code class="code-block-inline">echo.js</code> para um comando que repete a mensagem do usuário. A variável `args` conterá os argumentos da mensagem.</p>
+            <div class="code-block">
+<pre><code>module.exports = {
+    name: 'echo',
+    description: 'Repete uma mensagem.',
+    execute(message, args) {
+        // Se não houver argumentos, pede para o usuário fornecer um
+        if (!args.length) {
+            return message.reply('Você precisa fornecer uma mensagem para eu repetir!');
+        }
+        const mensagem = args.join(' ');
+        message.reply(mensagem);
+    },
+};
+</code></pre>
+            </div>
+            <h3>Criação de um comando com múltiplos argumentos</h3>
+            <p>Crie um arquivo <code class="code-block-inline">multi-args.js</code> para mostrar como lidar com mais de um argumento separado.</p>
+            <div class="code-block">
+<pre><code>module.exports = {
+    name: 'multi-args',
+    description: 'Exemplo de comando com múltiplos argumentos.',
+    execute(message, args) {
+        if (args.length < 2) {
+            return message.reply('Por favor, forneça pelo menos dois argumentos.');
+        }
+        const primeiro = args[0];
+        const segundo = args[1];
+        message.reply(`Primeiro: ${primeiro}, Segundo: ${segundo}`);
+    },
+};
+</code></pre>
+            </div>
+            <h3>Comando para Ver Informações dos Usuários</h3>
+            <p>Este comando é um ótimo exemplo de como usar informações mais detalhadas de um usuário e formatar a resposta de forma profissional com uma **Embed**. Crie um arquivo chamado <code class="code-block-inline">userinfo.js</code>:</p>
+            <div class="code-block">
+<pre><code>const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'userinfo',
+    description: 'Mostra informações sobre o usuário.',
+    execute(message, args) {
+        const user = message.author;
+        const member = message.guild.members.cache.get(user.id);
+
+        const embed = new EmbedBuilder()
+            .setColor('#0099ff')
+            .setTitle(`Informações de ${user.username}`)
+            .setDescription(`Detalhes sobre o usuário e sua conta.`)
+            .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+            .addFields(
+                { name: 'Nome de Usuário', value: user.username, inline: true },
+                { name: 'ID', value: user.id, inline: true },
+                { name: 'Entrou no Servidor em', value: member.joinedAt.toLocaleDateString('pt-BR'), inline: true },
+                { name: 'Conta Criada em', value: user.createdAt.toLocaleDateString('pt-BR'), inline: true }
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Comando userinfo' });
+
+        message.channel.send({ embeds: [embed] });
+    },
+};
+</code></pre>
+            </div>
+            <h3>Tratamento de exceções</h3>
+            <p>Para evitar erros, vamos adicionar um bloco `try...catch` ao nosso arquivo principal, `index.js`.</p>
+        </div>
+
+        <!-- Aula 3: Banco de dados para bots -->
+        <div class="step-card">
+            <h2>Aula 3: Banco de dados para bots</h2>
+            <p>Para armazenar dados permanentemente (como uma contagem de comandos), usaremos um arquivo JSON para simular um banco de dados.</p>
+            <h3>O Problema e a Solução: Armazenamento em Arquivo JSON</h3>
+            <p>O problema é que as variáveis no código são perdidas quando o bot é reiniciado. A solução é armazenar os dados em um arquivo (`data.json`) no disco, e o bot lê e escreve nele.</p>
+            <h3>Comando de Contagem por Usuário</h3>
+            <p>Crie um novo arquivo <code class="code-block-inline">count.js</code>. Este comando irá ler o arquivo `data.json`, incrementar a contagem do usuário e salvar de volta.</p>
+            <div class="code-block">
+<pre><code>const fs = require('fs');
+const path = require('path');
+
+module.exports = {
+    name: 'count',
+    description: 'Mostra a quantidade de vezes que você executou este comando.',
+    execute(message, args) {
+        const filePath = path.join(__dirname, '..', 'data.json');
+        
+        let data = {};
+        if (fs.existsSync(filePath)) {
+            const fileContent = fs.readFileSync(filePath, 'utf8');
+            data = JSON.parse(fileContent);
+        }
+
+        const userId = message.author.id;
+
+        if (!data[userId]) {
+            data[userId] = { commandCount: 1 };
+        } else {
+            data[userId].commandCount = (data[userId].commandCount || 0) + 1;
+        }
+
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+
+        message.reply(`Você executou este comando ${data[userId].commandCount} vezes!`);
+    },
+};
+</code></pre>
+            </div>
+            <p>Não se esqueça de criar um arquivo `data.json` vazio na raiz do seu projeto. Por exemplo, com o conteúdo `{}`.</p>
+        </div>
+        
+        <!-- Aula 4: Eventos -->
+        <div class="step-card">
+            <h2>Aula 4: Eventos</h2>
+            <p>Além de comandos, os bots podem responder a eventos que acontecem no servidor, como novas mensagens ou mudanças de estado de voz.</p>
+            <h3>Contador de Mensagens e Ranking</h3>
+            <p>Adicione a lógica de contagem de mensagens ao seu `index.js` e crie um novo comando para mostrar o ranking.</p>
+            <p>Crie o arquivo <code class="code-block-inline">ranking.js</code> na pasta `commands`:</p>
+            <div class="code-block">
+<pre><code>const fs = require('fs');
+const path = require('path');
+const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'ranking',
+    description: 'Mostra o ranking de mensagens do servidor.',
+    execute(message, args) {
+        const filePath = path.join(__dirname, '..', 'data.json');
+        
+        let data = {};
+        if (fs.existsSync(filePath)) {
+            const fileContent = fs.readFileSync(filePath, 'utf8');
+            data = JSON.parse(fileContent);
+        }
+
+        const ranking = Object.entries(data)
+            .filter(([, user]) => user.messageCount) // Filtra usuários que não enviaram mensagens
+            .sort(([, a], [, b]) => b.messageCount - a.messageCount)
+            .map(([userId, user], index) => {
+                const discordUser = message.guild.members.cache.get(userId);
+                const username = discordUser ? discordUser.user.username : `Usuário Desconhecido (${userId})`;
+                return `${index + 1}. ${username}: ${user.messageCount} mensagens`;
+            });
+
+        const embed = new EmbedBuilder()
+            .setColor('#ff9900')
+            .setTitle('🏆 Ranking de Mensagens 🏆')
+            .setDescription(ranking.join('\n') || 'Nenhuma mensagem registrada ainda.');
+            
+        message.channel.send({ embeds: [embed] });
+    },
+};
+</code></pre>
+            </div>
+            <h3>Evento `voiceStateUpdate`</h3>
+            <p>Este evento é ativado quando o estado de voz de um usuário muda. Vamos usar para criar um sistema de logs no canal de texto.</p>
+            <p>Para isso, você precisará do ID do canal de texto que receberá as mensagens. Para conseguir o ID, ative o "Modo Desenvolvedor" nas configurações do Discord, clique com o botão direito no canal e selecione "Copiar ID".</p>
+        </div>
+
+        <!-- Arquivos Finais do Projeto -->
+        <div class="step-card">
+            <h2>Arquivos Finais do Projeto</h2>
+            <p>Aqui estão os arquivos finais do projeto, com todos os comandos e eventos que criamos.</p>
+            <h3>Estrutura Final</h3>
+            <div class="code-block">
+                seu-bot/<br>
+                ├── index.js <br>
+                ├── data.json <br>
+                └── commands/<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── count.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── echo.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── multi-args.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── ping.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── ranking.js<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── userinfo.js
+            </div>
+            <h3>Código do `index.js` (Final)</h3>
+            <p>Este é o arquivo principal com todos os ouvintes de evento. **Lembre-se de substituir o token e o ID do canal!**</p>
+            <div class="code-block">
+<pre><code>const fs = require('fs');
+const path = require('path');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
+
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildVoiceStates // Para o evento de voz
+    ]
+});
+
+client.commands = new Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const prefix = '!';
+
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
+
+const token = 'SEU_TOKEN_AQUI';
+const logChannelId = 'ID_DO_CANAL_DE_LOGS_AQUI'; // Substitua pelo ID do canal de texto
+
+// Lógica de contagem de mensagens
+client.on('messageCreate', message => {
+    if (message.author.bot) return; // Ignora mensagens de outros bots
+
+    const filePath = path.join(__dirname, 'data.json');
+    let data = {};
+    if (fs.existsSync(filePath)) {
+        data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    }
+
+    const userId = message.author.id;
+    if (!data[userId]) {
+        data[userId] = { messageCount: 1, commandCount: 0 };
+    } else {
+        data[userId].messageCount = (data[userId].messageCount || 0) + 1;
+    }
+
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+
+    if (!message.content.startsWith(prefix)) return;
+
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
+
+    const command = client.commands.get(commandName);
+
+    if (!command) return;
+
+    try {
+        command.execute(message, args);
+    } catch (error) {
+        console.error(error);
+        message.reply('Houve um erro ao tentar executar esse comando!');
+    }
+});
+
+// Lógica de atualização do estado de voz
+client.on('voiceStateUpdate', (oldState, newState) => {
+    const channel = client.channels.cache.get(logChannelId);
+    if (!channel) return console.error('Canal de logs não encontrado!');
+
+    // Usuário entrou em um canal de voz
+    if (!oldState.channelId && newState.channelId) {
+        channel.send(`${newState.member.displayName} entrou no canal de voz.`);
+    }
+    // Usuário saiu de um canal de voz
+    else if (oldState.channelId && !newState.channelId) {
+        channel.send(`${oldState.member.displayName} saiu do canal de voz.`);
+    }
+});
+
+client.once('ready', () => {
+    console.log(`Bot conectado como ${client.user.tag}!`);
+});
+
+client.login(token);
+</code></pre>
+            </div>
+        </div>
+
+        <!-- Execução do Bot -->
+        <div class="step-card">
+            <h2>Execução do Bot</h2>
+            <p>Abra o seu terminal na raiz do projeto e siga estes passos:</p>
+            <ol class="list-decimal list-inside mt-4 space-y-2">
+                <li>Instale as dependências:
+                    <div class="code-block">npm install discord.js</div>
+                </li>
+                <li>Execute o bot:
+                    <div class="code-block">node index.js</div>
+                </li>
+            </ol>
+            <p>Com o bot online, vá para o Discord e digite `!ping`, `!echo sua mensagem` ou `!ranking` para testá-lo!</p>
+        </div>
+        
+        <!-- Entendendo o Código Linha por Linha -->
+        <div class="step-card">
+            <h2>Entendendo o Código Linha por Linha</h2>
+            <p>Esta seção detalha o que cada parte do código faz, explicando a lógica por trás de cada arquivo e função. É uma ótima maneira de solidificar seu conhecimento e se preparar para criar seus próprios comandos.</p>
+            
+            <h3>1. O Arquivo Principal: `index.js`</h3>
+            <p>Este é o "cérebro" do seu bot. Ele lida com a conexão, o carregamento dos comandos e a escuta de eventos.</p>
+            <div class="code-block">
+<pre><code>// Importa os módulos necessários
+const fs = require('fs');
+const path = require('path');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
+
+// `fs`: Permite a leitura e escrita de arquivos no disco.
+// `path`: Ajuda a construir caminhos de arquivo de forma segura.
+// `Client`: A classe principal que representa seu bot.
+// `GatewayIntentBits`: Define quais eventos do Discord seu bot receberá.
+// `Collection`: Uma estrutura de dados otimizada para armazenar os comandos.
+</code></pre>
+<pre><code>// Cria uma nova instância do cliente com as intenções necessárias
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,           // Permite que o bot veja os servidores
+        GatewayIntentBits.GuildMessages,    // Permite que o bot leia mensagens nos canais
+        GatewayIntentBits.MessageContent,   // Permite que o bot veja o conteúdo das mensagens
+        GatewayIntentBits.GuildVoiceStates  // Permite que o bot veja o estado de voz dos usuários
+    ]
+});
+</code></pre>
+<pre><code>// Carrega os comandos de forma dinâmica
+client.commands = new Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const prefix = '!';
+
+// `client.commands = new Collection();`: Cria uma coleção para armazenar os comandos.
+// `fs.readdirSync('./commands')`: Lê a pasta `commands` para encontrar todos os arquivos.
+// `filter(file => ...)`: Garante que apenas arquivos JavaScript sejam carregados.
+// `prefix`: A string que o bot usa para identificar comandos (ex: `!ping`).
+</code></pre>
+<pre><code>// Itera sobre os arquivos de comando e os armazena
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
+</code></pre>
+<pre><code>// Lógica de contagem de mensagens (um evento)
+client.on('messageCreate', message => {
+    if (message.author.bot) return;
+
+    // `client.on('messageCreate', ...)`: Ouve o evento de criação de mensagem.
+    // `if (message.author.bot) return;`: Ignora mensagens de outros bots para evitar loops infinitos.
+    // A lógica a seguir lê, atualiza e salva a contagem de mensagens no `data.json`.
+});
+</code></pre>
+<pre><code>// Lógica de atualização do estado de voz (outro evento)
+client.on('voiceStateUpdate', (oldState, newState) => {
+    const channel = client.channels.cache.get(logChannelId);
+    if (!channel) return console.error('Canal de logs não encontrado!');
+    
+    // `client.on('voiceStateUpdate', ...)`: Ouve quando o estado de voz de um usuário muda.
+    // `oldState` e `newState`: Contêm as informações do usuário antes e depois da mudança.
+    // `channel.send(...)`: Envia uma mensagem para o canal de logs.
+});
+</code></pre>
+<pre><code>// Evento de 'ready'
+client.once('ready', () => {
+    console.log(`Bot conectado como ${client.user.tag}!`);
+});
+</code></pre>
+<pre><code>// Inicia a conexão do bot
+client.login(token);
+</code></pre>
+            
+            <h3>2. O Arquivo de Comando: `ping.js`</h3>
+            <p>O arquivo mais simples. Ele define o nome, descrição e a lógica de execução para o comando `!ping`.</p>
+            <div class="code-block">
+<pre><code>module.exports = {
+    // Exporta o objeto de comando para ser usado pelo index.js
+    name: 'ping',
+    description: 'Responde com "Pong!"',
+    execute(message, args) {
+        // `name`: O nome do comando que o usuário deve digitar.
+        // `description`: Uma breve descrição do que o comando faz.
+        // `execute(...)`: A função que será chamada quando o comando for executado.
+        message.reply('Pong!'); // Envia uma resposta para o canal.
+    },
+};
+</code></pre>
+            </div>
+
+            <h3>3. O Arquivo de Comando: `userinfo.js`</h3>
+            <p>Este comando é um ótimo exemplo de como usar **Embeds** para uma resposta mais visual e formatada.</p>
+            <div class="code-block">
+<pre><code>const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'userinfo',
+    description: 'Mostra informações sobre o usuário.',
+    execute(message, args) {
+        const user = message.author; // Pega o objeto do usuário que executou o comando.
+        const member = message.guild.members.cache.get(user.id); // Pega o objeto do membro do servidor.
+
+        const embed = new EmbedBuilder()
+            .setColor('#0099ff') // Define a cor da barra lateral da embed.
+            .setTitle(`Informações de ${user.username}`) // Título da embed.
+            .setThumbnail(user.displayAvatarURL({ dynamic: true })) // Define a miniatura (foto de perfil).
+            .addFields(
+                // Adiciona campos de informação à embed.
+                { name: 'Nome de Usuário', value: user.username, inline: true },
+                { name: 'ID', value: user.id, inline: true },
+                { name: 'Entrou no Servidor em', value: member.joinedAt.toLocaleDateString('pt-BR'), inline: true },
+                { name: 'Conta Criada em', value: user.createdAt.toLocaleDateString('pt-BR'), inline: true }
+            )
+            .setTimestamp() // Adiciona a data e hora atual.
+            .setFooter({ text: 'Comando userinfo' }); // Adiciona um rodapé.
+
+        message.channel.send({ embeds: [embed] }); // Envia a mensagem com a embed.
+    },
+};
+</code></pre>
+            </div>
+
+            <h3>4. O Arquivo de Comando: `count.js`</h3>
+            <p>Este comando demonstra a leitura e escrita em um arquivo JSON para persistir dados.</p>
+            <div class="code-block">
+<pre><code>const fs = require('fs');
+const path = require('path');
+
+module.exports = {
+    name: 'count',
+    description: 'Mostra a quantidade de vezes que você executou este comando.',
+    execute(message, args) {
+        const filePath = path.join(__dirname, '..', 'data.json'); // Constrói o caminho para o arquivo `data.json`.
+        
+        let data = {};
+        if (fs.existsSync(filePath)) {
+            // Se o arquivo existir, ele é lido e o JSON é "parseado" para um objeto.
+            const fileContent = fs.readFileSync(filePath, 'utf8');
+            data = JSON.parse(fileContent);
+        }
+
+        const userId = message.author.id; // Pega o ID único do usuário.
+
+        if (!data[userId]) {
+            // Se o usuário não existe no arquivo, cria a entrada.
+            data[userId] = { commandCount: 1 };
+        } else {
+            // Se o usuário existe, incrementa a contagem.
+            data[userId].commandCount = (data[userId].commandCount || 0) + 1;
+        }
+
+        // Escreve o objeto de volta no arquivo, formatando-o para leitura humana (indentação 2).
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+
+        message.reply(`Você executou este comando ${data[userId].commandCount} vezes!`);
+    },
+};
+</code></pre>
+            </div>
+
+            <h3>5. O Arquivo de Comando: `ranking.js`</h3>
+            <p>Este comando lê os dados do `data.json` e os formata em um ranking de mensagens, usando o método `sort()` do JavaScript.</p>
+            <div class="code-block">
+<pre><code>const fs = require('fs');
+const path = require('path');
+const { EmbedBuilder } = require('discord.js');
+
+module.exports = {
+    name: 'ranking',
+    description: 'Mostra o ranking de mensagens do servidor.',
+    execute(message, args) {
+        const filePath = path.join(__dirname, '..', 'data.json');
+        
+        let data = {};
+        if (fs.existsSync(filePath)) {
+            const fileContent = fs.readFileSync(filePath, 'utf8');
+            data = JSON.parse(fileContent);
+        }
+
+        const ranking = Object.entries(data)
+            .filter(([, user]) => user.messageCount) // Filtra usuários sem contagem de mensagens.
+            .sort(([, a], [, b]) => b.messageCount - a.messageCount) // Ordena do maior para o menor.
+            .map(([userId, user], index) => {
+                const discordUser = message.guild.members.cache.get(userId);
+                const username = discordUser ? discordUser.user.username : `Usuário Desconhecido (${userId})`;
+                return `${index + 1}. ${username}: ${user.messageCount} mensagens`;
+            });
+
+        const embed = new EmbedBuilder()
+            .setColor('#ff9900')
+            .setTitle('🏆 Ranking de Mensagens 🏆')
+            .setDescription(ranking.join('\n') || 'Nenhuma mensagem registrada ainda.');
+            
+        message.channel.send({ embeds: [embed] });
+    },
+};
+</code></pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
